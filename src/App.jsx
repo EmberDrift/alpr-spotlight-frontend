@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 // In production, replace with your deployed Cloudflare Worker URL
-const API_BASE = "https://alpr-spotlight-api.mailforslim.workers.dev";
+const API_BASE = "https://alpr-spotlight-api.YOUR-SUBDOMAIN.workers.dev";
 // For local dev/demo without the worker, set USE_MOCK = true
-const USE_MOCK = false;
+const USE_MOCK = true;
 
 const LEAFLET_CSS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
 const LEAFLET_JS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
@@ -153,8 +153,65 @@ function StatusDot({ status }) {
   );
 }
 
+// ─── State open records law Wikipedia links ───────────────────────────────────
+const STATE_RECORDS_LAWS = [
+  { code: "AL", name: "Alabama", law: "Alabama Open Records Law", url: "https://en.wikipedia.org/wiki/Alabama_Open_Records_Law" },
+  { code: "AK", name: "Alaska", law: "Alaska Public Records Act", url: "https://en.wikipedia.org/wiki/Alaska_Public_Records_Act" },
+  { code: "AZ", name: "Arizona", law: "Arizona Public Records Law", url: "https://en.wikipedia.org/wiki/Arizona_Public_Records_Law" },
+  { code: "AR", name: "Arkansas", law: "Arkansas Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Arkansas_Freedom_of_Information_Act" },
+  { code: "CA", name: "California", law: "California Public Records Act", url: "https://en.wikipedia.org/wiki/California_Public_Records_Act" },
+  { code: "CO", name: "Colorado", law: "Colorado Open Records Act", url: "https://en.wikipedia.org/wiki/Colorado_Open_Records_Act" },
+  { code: "CT", name: "Connecticut", law: "Connecticut Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Connecticut_Freedom_of_Information_Act" },
+  { code: "DE", name: "Delaware", law: "Delaware Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Delaware_Freedom_of_Information_Act" },
+  { code: "FL", name: "Florida", law: "Florida Sunshine Law", url: "https://en.wikipedia.org/wiki/Florida_Sunshine_Law" },
+  { code: "GA", name: "Georgia", law: "Georgia Open Records Act", url: "https://en.wikipedia.org/wiki/Georgia_Open_Records_Act" },
+  { code: "HI", name: "Hawaii", law: "Hawaii Uniform Information Practices Act", url: "https://en.wikipedia.org/wiki/Hawaii_Uniform_Information_Practices_Act" },
+  { code: "ID", name: "Idaho", law: "Idaho Public Records Law", url: "https://en.wikipedia.org/wiki/Idaho_Public_Records_Law" },
+  { code: "IL", name: "Illinois", law: "Illinois Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Illinois_Freedom_of_Information_Act" },
+  { code: "IN", name: "Indiana", law: "Indiana Access to Public Records Act", url: "https://en.wikipedia.org/wiki/Indiana_Access_to_Public_Records_Act" },
+  { code: "IA", name: "Iowa", law: "Iowa Open Records Law", url: "https://en.wikipedia.org/wiki/Iowa_Open_Records_Law" },
+  { code: "KS", name: "Kansas", law: "Kansas Open Records Act", url: "https://en.wikipedia.org/wiki/Kansas_Open_Records_Act" },
+  { code: "KY", name: "Kentucky", law: "Kentucky Open Records Act", url: "https://en.wikipedia.org/wiki/Kentucky_Open_Records_Act" },
+  { code: "LA", name: "Louisiana", law: "Louisiana Public Records Law", url: "https://en.wikipedia.org/wiki/Louisiana_Public_Records_Law" },
+  { code: "ME", name: "Maine", law: "Maine Freedom of Access Act", url: "https://en.wikipedia.org/wiki/Maine_Freedom_of_Access_Act" },
+  { code: "MD", name: "Maryland", law: "Maryland Public Information Act", url: "https://en.wikipedia.org/wiki/Maryland_Public_Information_Act" },
+  { code: "MA", name: "Massachusetts", law: "Massachusetts Public Records Law", url: "https://en.wikipedia.org/wiki/Massachusetts_Public_Records_Law" },
+  { code: "MI", name: "Michigan", law: "Michigan Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Michigan_Freedom_of_Information_Act" },
+  { code: "MN", name: "Minnesota", law: "Minnesota Government Data Practices Act", url: "https://en.wikipedia.org/wiki/Minnesota_Government_Data_Practices_Act" },
+  { code: "MS", name: "Mississippi", law: "Mississippi Public Records Act", url: "https://en.wikipedia.org/wiki/Mississippi_Public_Records_Act" },
+  { code: "MO", name: "Missouri", law: "Missouri Sunshine Law", url: "https://en.wikipedia.org/wiki/Missouri_Sunshine_Law" },
+  { code: "MT", name: "Montana", law: "Montana Constitution Right to Know", url: "https://en.wikipedia.org/wiki/Montana_Constitution" },
+  { code: "NE", name: "Nebraska", law: "Nebraska Public Records Statutes", url: "https://en.wikipedia.org/wiki/Nebraska_Public_Records_Statutes" },
+  { code: "NV", name: "Nevada", law: "Nevada Public Records Act", url: "https://en.wikipedia.org/wiki/Nevada_Public_Records_Act" },
+  { code: "NH", name: "New Hampshire", law: "New Hampshire Right-to-Know Law", url: "https://en.wikipedia.org/wiki/New_Hampshire_Right-to-Know_Law" },
+  { code: "NJ", name: "New Jersey", law: "New Jersey Open Public Records Act", url: "https://en.wikipedia.org/wiki/New_Jersey_Open_Public_Records_Act" },
+  { code: "NM", name: "New Mexico", law: "New Mexico Inspection of Public Records Act", url: "https://en.wikipedia.org/wiki/New_Mexico_Inspection_of_Public_Records_Act" },
+  { code: "NY", name: "New York", law: "New York Freedom of Information Law", url: "https://en.wikipedia.org/wiki/New_York_Freedom_of_Information_Law" },
+  { code: "NC", name: "North Carolina", law: "North Carolina Public Records Law", url: "https://en.wikipedia.org/wiki/North_Carolina_Public_Records_Law" },
+  { code: "ND", name: "North Dakota", law: "North Dakota Open Records Law", url: "https://en.wikipedia.org/wiki/North_Dakota_open_records_law" },
+  { code: "OH", name: "Ohio", law: "Ohio Public Records Act", url: "https://en.wikipedia.org/wiki/Ohio_Public_Records_Act" },
+  { code: "OK", name: "Oklahoma", law: "Oklahoma Open Records Act", url: "https://en.wikipedia.org/wiki/Oklahoma_Open_Records_Act" },
+  { code: "OR", name: "Oregon", law: "Oregon Public Records Law", url: "https://en.wikipedia.org/wiki/Oregon_Public_Records_Law" },
+  { code: "PA", name: "Pennsylvania", law: "Pennsylvania Right-to-Know Law", url: "https://en.wikipedia.org/wiki/Pennsylvania_Right-to-Know_Law" },
+  { code: "RI", name: "Rhode Island", law: "Rhode Island Access to Public Records Act", url: "https://en.wikipedia.org/wiki/Rhode_Island_Access_to_Public_Records_Act" },
+  { code: "SC", name: "South Carolina", law: "South Carolina Freedom of Information Act", url: "https://en.wikipedia.org/wiki/South_Carolina_Freedom_of_Information_Act" },
+  { code: "SD", name: "South Dakota", law: "South Dakota Open Records Law", url: "https://en.wikipedia.org/wiki/South_Dakota_open_records_law" },
+  { code: "TN", name: "Tennessee", law: "Tennessee Public Records Act", url: "https://en.wikipedia.org/wiki/Tennessee_Public_Records_Act" },
+  { code: "TX", name: "Texas", law: "Texas Public Information Act", url: "https://en.wikipedia.org/wiki/Texas_Public_Information_Act" },
+  { code: "UT", name: "Utah", law: "Utah Government Records Access and Management Act", url: "https://en.wikipedia.org/wiki/Utah_Government_Records_Access_and_Management_Act" },
+  { code: "VT", name: "Vermont", law: "Vermont Public Records Act", url: "https://en.wikipedia.org/wiki/Vermont_Public_Records_Act" },
+  { code: "VA", name: "Virginia", law: "Virginia Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Virginia_Freedom_of_Information_Act" },
+  { code: "WA", name: "Washington", law: "Washington Public Records Act", url: "https://en.wikipedia.org/wiki/Washington_Public_Records_Act" },
+  { code: "WV", name: "West Virginia", law: "West Virginia Freedom of Information Act", url: "https://en.wikipedia.org/wiki/West_Virginia_Freedom_of_Information_Act" },
+  { code: "WI", name: "Wisconsin", law: "Wisconsin Open Records Law", url: "https://en.wikipedia.org/wiki/Wisconsin_Open_Records_Law" },
+  { code: "WY", name: "Wyoming", law: "Wyoming Public Records Act", url: "https://en.wikipedia.org/wiki/Wyoming_Public_Records_Act" },
+  { code: "DC", name: "Washington D.C.", law: "D.C. Freedom of Information Act", url: "https://en.wikipedia.org/wiki/Freedom_of_Information_Act_(United_States)" },
+];
+
 export default function ALPRSpotlight() {
   const [step, setStep] = useState(1);
+  const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
+  const [selectedState, setSelectedState] = useState("");
   const [leafletReady, setLeafletReady] = useState(false);
   const [pin, setPin] = useState(null);
   const [radius, setRadius] = useState(5);
@@ -354,16 +411,137 @@ export default function ALPRSpotlight() {
     <div style={{ minHeight: "100vh", background: css.bg, fontFamily: css.mono, color: css.textMid }}>
       <style>{`
         * { box-sizing: border-box; }
-        input, button { font-family: inherit; }
+        input, button, select { font-family: inherit; }
         ::-webkit-scrollbar { width: 4px; } ::-webkit-scrollbar-track { background: #0a0e1a; }
         ::-webkit-scrollbar-thumb { background: #1a2535; border-radius: 2px; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
         @keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }
         @keyframes fadeIn { from{opacity:0;transform:translateY(4px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes modalIn { from{opacity:0;transform:scale(0.96)} to{opacity:1;transform:scale(1)} }
         .agency-row:hover { background: #0f1e30 !important; border-color: #1d3557 !important; }
         .btn-ghost:hover { background: #0d1421 !important; border-color: #1d3557 !important; }
         .btn-primary:hover { background: #c0303c !important; }
       `}</style>
+
+      {/* ── Disclaimer Modal ─────────────────────────────────────────────────── */}
+      {!disclaimerAccepted && (
+        <div style={{
+          position: "fixed", inset: 0, zIndex: 9999,
+          background: "rgba(4,6,12,0.95)", backdropFilter: "blur(6px)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          padding: 20
+        }}>
+          <div style={{
+            background: "#0a0f1a", border: `1px solid ${css.borderHi}`,
+            borderRadius: 10, maxWidth: 580, width: "100%",
+            boxShadow: "0 24px 80px rgba(0,0,0,0.8)",
+            animation: "modalIn 0.25s ease"
+          }}>
+            {/* Modal header */}
+            <div style={{
+              background: "#0d1421", borderBottom: `1px solid ${css.border}`,
+              borderRadius: "10px 10px 0 0", padding: "16px 22px",
+              display: "flex", alignItems: "center", gap: 10
+            }}>
+              <div style={{
+                width: 28, height: 28, background: css.accent, borderRadius: 4,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 14, flexShrink: 0
+              }}>⚖️</div>
+              <div>
+                <div style={{ fontSize: 13, fontWeight: "bold", color: css.textHi, letterSpacing: "0.1em", textTransform: "uppercase" }}>Legal Disclaimer</div>
+                <div style={{ fontSize: 9, color: css.textLo, letterSpacing: "0.15em", textTransform: "uppercase" }}>Please read before using ALPR Spotlight</div>
+              </div>
+            </div>
+
+            {/* Modal body */}
+            <div style={{ padding: "20px 22px", maxHeight: "55vh", overflowY: "auto" }}>
+
+              {[
+                {
+                  icon: "📋",
+                  title: "For Lawful Public Records Requests Only",
+                  text: "This tool is designed solely to assist in submitting lawful public records requests under applicable federal and state law, including the Freedom of Information Act (5 U.S.C. § 552) and equivalent state sunshine laws. All 50 states have public records statutes that grant the public the right to request government records."
+                },
+                {
+                  icon: "📝",
+                  title: "Generated Letters Are Templates",
+                  text: "Request letters generated by this tool are templates only. You are responsible for reviewing, editing, and verifying the accuracy of any request before sending it. The tool makes no guarantee that generated letters are legally sufficient for any specific jurisdiction or agency."
+                },
+                {
+                  icon: "⚠️",
+                  title: "No Legal Advice",
+                  text: "Nothing in this tool constitutes legal advice. Laws governing public records requests vary significantly by state and agency type. Consult a qualified attorney if you have questions about your rights, obligations, or the legal sufficiency of a specific request."
+                },
+                {
+                  icon: "🏛️",
+                  title: "Agency Contact Information",
+                  text: "Agency data is sourced from OpenStreetMap contributors and may be incomplete, outdated, or inaccurate. Email addresses found by automated scraping are not guaranteed to be the correct or current records contact. Always verify contact information independently before relying on it."
+                },
+                {
+                  icon: "🔒",
+                  title: "No Data Collected",
+                  text: "This tool does not collect, store, or transmit your personal information, request content, or email communications. All email sending occurs through your own email client. No request data passes through our servers."
+                },
+                {
+                  icon: "🚫",
+                  title: "Prohibited Uses",
+                  text: "This tool may not be used to harass, threaten, or intimidate any individual or agency; to submit frivolous or bad-faith requests; or for any purpose that violates applicable law. Misuse of public records laws may result in civil or criminal liability."
+                },
+              ].map((item, i) => (
+                <div key={i} style={{
+                  marginBottom: 14, padding: "11px 13px",
+                  background: "#080c14", border: `1px solid ${css.border}`,
+                  borderRadius: 6
+                }}>
+                  <div style={{ fontSize: 11, fontWeight: "bold", color: css.textHi, marginBottom: 5 }}>
+                    {item.icon} {item.title}
+                  </div>
+                  <div style={{ fontSize: 10, color: css.textMid, lineHeight: 1.7 }}>{item.text}</div>
+                </div>
+              ))}
+
+              <div style={{
+                padding: "10px 13px", background: "#0f1e30",
+                border: `1px solid ${css.blue}44`, borderRadius: 6,
+                fontSize: 10, color: css.blue, lineHeight: 1.7
+              }}>
+                By clicking <strong style={{ color: css.textHi }}>"I Understand — Continue"</strong> below, you acknowledge that you have read this disclaimer, that you will use this tool only for lawful public records requests, and that you accept full responsibility for any requests you submit.
+              </div>
+            </div>
+
+            {/* Modal footer */}
+            <div style={{
+              padding: "14px 22px", borderTop: `1px solid ${css.border}`,
+              display: "flex", gap: 10
+            }}>
+              <button
+                onClick={() => window.location.href = "https://www.google.com"}
+                style={{
+                  flex: 1, background: "transparent", border: `1px solid ${css.border}`,
+                  borderRadius: 5, color: css.textLo, padding: "10px",
+                  cursor: "pointer", fontSize: 10, letterSpacing: "0.1em"
+                }}
+              >
+                ← Leave Site
+              </button>
+              <button
+                onClick={() => setDisclaimerAccepted(true)}
+                style={{
+                  flex: 3, background: css.accent, border: "none",
+                  borderRadius: 5, color: "#fff", padding: "10px",
+                  cursor: "pointer", fontSize: 11, fontWeight: "bold",
+                  letterSpacing: "0.12em", textTransform: "uppercase",
+                  transition: "background 0.15s"
+                }}
+                className="btn-primary"
+              >
+                I Understand — Continue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── Header ─────────────────────────────────────────────────────────── */}
       <div style={{
@@ -703,10 +881,66 @@ export default function ALPRSpotlight() {
                 <span style={{ color: css.textLo }}>Zero data sent through this tool.</span>
               </div>
 
+              {/* ── State Open Records Law Reference ── */}
+              <div style={{
+                marginTop: 18, padding: "13px", background: css.card,
+                border: `1px solid ${css.border}`, borderRadius: 6
+              }}>
+                <div style={{ fontSize: 10, color: css.textLo, letterSpacing: "0.15em", textTransform: "uppercase", marginBottom: 8 }}>
+                  📖 State Open Records Law Reference
+                </div>
+                <div style={{ fontSize: 10, color: css.textDim, marginBottom: 10, lineHeight: 1.6 }}>
+                  Select your state to view the applicable open records law on Wikipedia.
+                </div>
+                <select
+                  value={selectedState}
+                  onChange={e => setSelectedState(e.target.value)}
+                  style={{
+                    width: "100%", background: "#080c14", border: `1px solid ${css.borderHi}`,
+                    borderRadius: 4, color: css.textHi, padding: "8px 10px",
+                    fontSize: 11, outline: "none", cursor: "pointer", marginBottom: 8,
+                    appearance: "none"
+                  }}
+                >
+                  <option value="">— Select a state —</option>
+                  {STATE_RECORDS_LAWS.map(s => (
+                    <option key={s.code} value={s.code}>{s.name}</option>
+                  ))}
+                </select>
+
+                {selectedState && (() => {
+                  const entry = STATE_RECORDS_LAWS.find(s => s.code === selectedState);
+                  return entry ? (
+                    <div style={{
+                      padding: "10px 12px", background: "#080c14",
+                      border: `1px solid ${css.blue}44`, borderRadius: 5
+                    }}>
+                      <div style={{ fontSize: 10, color: css.blue, marginBottom: 6, fontWeight: "bold" }}>
+                        {entry.name}: {entry.law}
+                      </div>
+                      <a
+                        href={entry.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-block", background: css.blueLo,
+                          border: `1px solid ${css.blue}44`, borderRadius: 3,
+                          color: css.blue, padding: "5px 12px", fontSize: 10,
+                          textDecoration: "none", letterSpacing: "0.1em",
+                          transition: "background 0.15s"
+                        }}
+                      >
+                        VIEW ON WIKIPEDIA →
+                      </a>
+                    </div>
+                  ) : null;
+                })()}
+              </div>
+
               <button onClick={() => setStep(3)} className="btn-ghost" style={{
                 width: "100%", background: "transparent", border: `1px solid ${css.border}`,
                 borderRadius: 4, color: css.textLo, padding: "8px", cursor: "pointer",
-                fontSize: 10, marginTop: 10, letterSpacing: "0.1em"
+                fontSize: 10, marginTop: 12, letterSpacing: "0.1em"
               }}>← Back to Agencies</button>
             </div>
           )}
