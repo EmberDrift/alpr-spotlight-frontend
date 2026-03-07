@@ -857,8 +857,8 @@ export default function ALPRSpotlight() {
                 }} onClick={() => setPreviewId(a.id)}>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ fontSize: 10, color: css.textHi, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{a.name}</div>
-                    <div style={{ fontSize: 9, color: getEmail(a) ? css.green : css.accent }}>
-                      {getEmail(a) || "No email — will open blank"}
+                    <div style={{ fontSize: 9, color: getEmail(a) ? css.green : a.website ? css.orange : css.accent }}>
+                        {getEmail(a) || (a.website ? `No email — visit: ${a.website}` : "No email — will open blank")}
                     </div>
                   </div>
                   <button onClick={e => { e.stopPropagation(); openEmail(a); }} style={{
