@@ -466,10 +466,7 @@ export default function ALPRSpotlight() {
               display: "flex", alignItems: "center", gap: 10
             }}>
               <div style={{
-                width: 28, height: 28, background: css.accent, borderRadius: 4,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontSize: 14, flexShrink: 0
-              }}>⚖️</div>
+                <img src="/logo.png" style={{ width: 28, height: 28, borderRadius: 3, flexShrink: 0 }} alt="logo" />
               <div>
                 <div style={{ fontSize: 13, fontWeight: "bold", color: css.textHi, letterSpacing: "0.1em", textTransform: "uppercase" }}>Legal Disclaimer</div>
                 <div style={{ fontSize: 9, color: css.textLo, letterSpacing: "0.15em", textTransform: "uppercase" }}>Please read before using ALPR Spotlight</div>
