@@ -2,9 +2,9 @@ import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
 // In production, replace with your deployed Cloudflare Worker URL
-const API_BASE = "https://alpr-spotlight-api.YOUR-SUBDOMAIN.workers.dev";
+const API_BASE = "https://alpr-spotlight-api.mailforslim.workers.dev";
 // For local dev/demo without the worker, set USE_MOCK = true
-const USE_MOCK = true;
+const USE_MOCK = false;
 
 const LEAFLET_CSS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css";
 const LEAFLET_JS = "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js";
