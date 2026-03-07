@@ -223,6 +223,9 @@ export default function ALPRSpotlight() {
   const [disclaimerAccepted, setDisclaimerAccepted] = useState(false);
   const [selectedState, setSelectedState] = useState("");
   const [sheetOpen, setSheetOpen] = useState(true);
+  const [sheetHeight, setSheetHeight] = useState(68); // percent of viewport
+  const dragStartY = useRef(null);
+  const dragStartHeight = useRef(null);
   const isMobile = useIsMobile();
   const [leafletReady, setLeafletReady] = useState(false);
   const [pin, setPin] = useState(null);
@@ -613,7 +616,7 @@ export default function ALPRSpotlight() {
               <span style={{ color: css.textDim }}>/4</span>
               <span style={{ color: css.textMid, marginLeft: 5 }}>{stepDots[step - 1]}</span>
             </div>
-            <button onClick={() => setSheetOpen(o => !o)} style={{
+            <button onClick={() => { setSheetOpen(o => !o); setSheetHeight(68); }} style={{
               background: sheetOpen ? css.accent : css.blueLo,
               border: "none", borderRadius: 4, color: "#fff",
               padding: "6px 12px", cursor: "pointer", fontSize: 10,
@@ -1103,20 +1106,46 @@ export default function ALPRSpotlight() {
           {/* Bottom sheet */}
           <div style={{
             position: "absolute", left: 0, right: 0, bottom: 0,
-            height: sheetOpen ? "68%" : 0,
-            transition: "height 0.3s cubic-bezier(0.4,0,0.2,1)",
+            height: sheetOpen ? `${sheetHeight}%` : 0,
+            transition: dragStartY.current ? "none" : "height 0.3s cubic-bezier(0.4,0,0.2,1)",
             background: css.panel, borderTop: `2px solid ${css.borderHi}`,
             borderRadius: "16px 16px 0 0", zIndex: 600,
             display: "flex", flexDirection: "column", overflow: "hidden",
             boxShadow: "0 -8px 32px rgba(0,0,0,0.6)"
           }}>
-            {/* Sheet header */}
-            <div style={{
-              padding: "10px 14px 8px", borderBottom: `1px solid ${css.border}`,
-              display: "flex", alignItems: "center", justifyContent: "space-between",
-              flexShrink: 0, position: "relative"
-            }}>
-              <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", width: 34, height: 4, background: css.border, borderRadius: 2 }} />
+            {/* Sheet header — drag target */}
+            <div
+              onTouchStart={e => {
+                dragStartY.current = e.touches[0].clientY;
+                dragStartHeight.current = sheetHeight;
+              }}
+              onTouchMove={e => {
+                if (dragStartY.current === null) return;
+                const deltaY = dragStartY.current - e.touches[0].clientY;
+                const windowH = window.innerHeight - 48; // minus header
+                const deltaPct = (deltaY / windowH) * 100;
+                const next = Math.min(92, Math.max(15, dragStartHeight.current + deltaPct));
+                setSheetHeight(next);
+              }}
+              onTouchEnd={() => {
+                // snap: below 25% → close, above 80% → full, else stay
+                if (sheetHeight < 25) {
+                  setSheetOpen(false);
+                  setSheetHeight(68);
+                } else if (sheetHeight > 80) {
+                  setSheetHeight(92);
+                } else {
+                  setSheetHeight(Math.round(sheetHeight / 10) * 10);
+                }
+                dragStartY.current = null;
+                dragStartHeight.current = null;
+              }}
+              style={{
+                padding: "10px 14px 8px", borderBottom: `1px solid ${css.border}`,
+                display: "flex", alignItems: "center", justifyContent: "space-between",
+                flexShrink: 0, position: "relative", touchAction: "none", cursor: "grab"
+              }}>
+              <div style={{ position: "absolute", top: 6, left: "50%", transform: "translateX(-50%)", width: 34, height: 4, background: css.borderHi, borderRadius: 2 }} />
               <div style={{ fontSize: 11, color: css.accent, letterSpacing: "0.15em", textTransform: "uppercase", fontWeight: "bold", marginTop: 6 }}>
                 Step {step} — {stepDots[step - 1]}
               </div>
