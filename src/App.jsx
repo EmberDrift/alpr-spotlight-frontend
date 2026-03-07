@@ -930,7 +930,7 @@ export default function ALPRSpotlight() {
                           transition: "background 0.15s"
                         }}
                       >
-                        VIEW ON WIKIPEDIA →
+                        VIEW ON GOOGLE →
                       </a>
                     </div>
                   ) : null;
