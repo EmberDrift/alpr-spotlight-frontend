@@ -456,6 +456,98 @@ export default function ALPRSpotlight() {
           display: "flex", alignItems: "center", justifyContent: "center",
           padding: 20
         }}>
+      {/* ── Donation Banner ────────────────────────────────────────────────── */}
+      {disclaimerAccepted && (
+        <div style={{
+          background: "#0a0f1a",
+          borderBottom: `1px solid ${css.border}`,
+          padding: "6px 16px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 10,
+          flexWrap: "wrap",
+          flexShrink: 0,
+          zIndex: 10,
+          position: "relative"
+        }}>
+          <span style={{ fontSize: 10, color: css.textLo, letterSpacing: "0.12em", textTransform: "uppercase", whiteSpace: "nowrap" }}>
+            Support this tool:
+          </span>
+
+        {[
+          { label: "XMR", address: "48kVUoyUjFhFAvhFS6xz9Td7Fv32Tshqf4YYKybKHNrqKsEuo2viVZFU1nmdpSybHzLjXu1NVTzNwemNVdxoj2CR5rhri5Q", color: "#f26822" },
+          { label: "ETH", address: "0xc45c48d93904468Ad5D0787Af1DDA2dC85539bBC", color: "#627eea" },
+          { label: "BTC", address: "bc1qzj27j2yq8dpgv3pj7thgcwxgs5f2mjaqjacc8l", color: "#f7931a" },
+        ].map(({ label, address, color }) => (
+          <button
+            key={label}
+            onClick={() => {
+              navigator.clipboard.writeText(address);
+              const el = document.getElementById(`copied-${label}`);
+              if (el) { el.style.opacity = 1; setTimeout(() => { el.style.opacity = 0; }, 1500); }
+            }}
+            style={{
+              background: color + "18",
+              border: `1px solid ${color}44`,
+              borderRadius: 4,
+              color: color,
+              padding: "4px 10px",
+              cursor: "pointer",
+              fontSize: 10,
+              letterSpacing: "0.1em",
+              display: "flex",
+              alignItems: "center",
+              gap: 5,
+              position: "relative"
+          }}
+          >
+            📋 {label}
+            <span
+              id={`copied-${label}`}
+              style={{
+                position: "absolute",
+                top: -22,
+                left: "50%",
+                transform: "translateX(-50%)",
+                background: css.card,
+                border: `1px solid ${css.border}`,
+                borderRadius: 3,
+                padding: "2px 7px",
+                fontSize: 9,
+                color: css.green,
+                whiteSpace: "nowrap",
+                opacity: 0,
+                transition: "opacity 0.2s",
+                pointerEvents: "none"
+              }}
+            >
+              Copied!
+            </span>
+          </button>
+        ))}
+
+        <a
+          href="https://ko-fi.com/emberdrift"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={{
+            background: "#ff5e5b18",
+            border: "1px solid #ff5e5b44",
+            borderRadius: 4,
+            color: "#ff5e5b",
+            padding: "4px 10px",
+            fontSize: 10,
+            textDecoration: "none",
+            letterSpacing: "0.1em",
+            whiteSpace: "nowrap"
+          }}
+        >
+          ☕ Ko-fi
+        </a>
+      </div>
+    )}
+
           <div style={{
             background: "#0a0f1a", border: `1px solid ${css.borderHi}`,
             borderRadius: 10, maxWidth: 580, width: "100%",
