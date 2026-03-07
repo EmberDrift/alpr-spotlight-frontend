@@ -38,14 +38,14 @@ async function mockScrapeEmail(agency) {
 
 // ─── Request types ────────────────────────────────────────────────────────────
 const REQUEST_TYPES = [
-  { id: "camera_locations", label: "Camera Locations", description: "All surveillance camera locations operated or accessed by the agency", icon: "📍" },
-  { id: "install_dates", label: "Installation Dates", description: "Dates when surveillance equipment was installed or activated", icon: "📅" },
-  { id: "purchase_prices", label: "Purchase Prices", description: "Costs, invoices, and procurement records for surveillance equipment", icon: "💰" },
-  { id: "policies", label: "Policies & Procedures", description: "Written policies governing use of surveillance technology", icon: "📋" },
-  { id: "audit_records", label: "Audit Records", description: "Audit logs, access records, and usage reports for surveillance systems", icon: "🔍" },
-  { id: "maintenance", label: "Maintenance Records", description: "Service records, repairs, and maintenance history", icon: "🔧" },
-  { id: "contracts", label: "Vendor Contracts", description: "Contracts with surveillance technology vendors and contractors", icon: "📄" },
-  { id: "retention", label: "Retention Policies", description: "Data retention schedules and deletion policies for footage/data", icon: "🗂️" },
+  { id: "camera_locations", label: "Camera Locations", description: "All non-vehicle mounted automatic license plate reader camera locations operated or accessed by the agency", icon: "📍" },
+  { id: "install_dates", label: "Installation Dates", description: "Dates when automatic license plate reader cameras were installed or activated", icon: "📅" },
+  { id: "purchase_prices", label: "Purchase Prices", description: "Costs, invoices, and procurement records for automatic license plate reader cameras", icon: "💰" },
+  { id: "policies", label: "Policies & Procedures", description: "Written policies governing use of automatic license plate reader cameras", icon: "📋" },
+  { id: "audit_records", label: "Audit Records", description: "Audit logs, access records, and usage reports for automatic license plate reader cameras", icon: "🔍" },
+  { id: "maintenance", label: "Maintenance Records", description: "Service records, repairs, and maintenance history for automatic license plate reader cameras", icon: "🔧" },
+  { id: "contracts", label: "Vendor Contracts", description: "Contracts with automatic license plate reader camera vendors and contractors", icon: "📄" },
+  { id: "retention", label: "Retention Policies", description: "Data retention schedules and deletion policies for footage/data captured by automatic license plate reader cameras", icon: "🗂️" },
 ];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
