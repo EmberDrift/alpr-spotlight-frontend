@@ -1,6 +1,3 @@
-Alpr spotlight app · JSX
-Copy
-
 import { useState, useEffect, useRef, useCallback } from "react";
 
 // ─── Config ───────────────────────────────────────────────────────────────────
