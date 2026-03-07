@@ -153,7 +153,7 @@ function StatusDot({ status }) {
   );
 }
 
-// ─── State open records law Wikipedia links ───────────────────────────────────
+// ─── State open records law Google links ───────────────────────────────────
 const STATE_RECORDS_LAWS = [
   { code: "AL", name: "Alabama", law: "Alabama Open Records Law", url: "https://www.google.com/search?q=Alabama+Open+Records+Law+open+records+request+Alabama" },
   { code: "AK", name: "Alaska", law: "Alaska Public Records Act", url: "https://www.google.com/search?q=Alaska+Public+Records+Act+open+records+request+Alaska" },
@@ -890,7 +890,7 @@ export default function ALPRSpotlight() {
                   📖 State Open Records Law Reference
                 </div>
                 <div style={{ fontSize: 10, color: css.textDim, marginBottom: 10, lineHeight: 1.6 }}>
-                  Select your state to view the applicable open records law on Wikipedia.
+                  Select your state to search for the applicable open records law on Google.
                 </div>
                 <select
                   value={selectedState}
