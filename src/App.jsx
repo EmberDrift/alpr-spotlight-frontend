@@ -572,7 +572,7 @@ export default function ALPRSpotlight() {
           gap: 6, flexShrink: 0, zIndex: 10, overflowX: "auto", overflowY: "hidden",
           scrollbarWidth: "none"
         }}>
-          <span style={{ fontSize: 9, color: css.textDim, letterSpacing: "0.15em", textTransform: "uppercase", whiteSpace: "nowrap", flexShrink: 0, paddingRight: 2 }}>
+          <span style={{ fontSize: 9, color: css.textHi, fontWeight: "bold", letterSpacing: "0.15em", textTransform: "uppercase", whiteSpace: "nowrap", flexShrink: 0, paddingRight: 2 }}>
             Support:
           </span>
           {[
