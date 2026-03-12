@@ -1,4 +1,7 @@
 # alpr-spotlight-frontend
+
+![ALPR Spotlight Banner](ALPR_Spotlight_Banner.png)
+
 # ALPR Spotlight
 
 A free, open source public records request tool for automated license plate reader (ALPR) surveillance cameras. Search for law enforcement agencies near any location and generate pre-written public records request emails to send directly from your own email client.
