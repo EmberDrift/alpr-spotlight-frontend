@@ -1,6 +1,6 @@
 # alpr-spotlight-frontend
 
-![ALPR Spotlight Banner](ALPR Spotlight Banner.png)
+![ALPR Spotlight Banner](ALPR_Spotlight_Banner.png)
 
 # ALPR Spotlight
 
